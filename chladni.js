@@ -68,7 +68,8 @@ const moveParticles = () => {
 }
 
 const wipeScreen = () => {
-  background(255);
+  clear()
+  // background(255);
   stroke(0);
 }
 
