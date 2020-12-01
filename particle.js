@@ -1,9 +1,16 @@
+// const _clrs = [
+//   [0, 0, 0],
+//   [99, 29, 99],
+//   [180, 61, 43],
+//   [255, 128, 0],
+//   [212, 212, 212]
+// ]
+
 const _clrs = [
   [0, 0, 0],
   [99, 29, 99],
   [180, 61, 43],
   [255, 128, 0],
-  [212, 212, 212]
 ]
 
 // chladni 2D closed-form solution - returns between -1 and 1
@@ -43,9 +50,9 @@ class Particle {
   }
 
   updateColor() {
-    let idx = ceil(map(this.y, 0, 1, 0, _clrs.length-1))
-    if (random(1) > .8) idx = floor(random(_clrs.length))
-    this.color = _clrs[idx]
+    this.idx = ceil(map(this.y, 0, 1, 0, _clrs.length - 1))
+    if (random(1) > .8) this.idx = floor(random(_clrs.length))
+    this.color = _clrs[this.idx]
   }
 
   updateOffsets() {
@@ -63,5 +70,7 @@ class Particle {
   show() {
     stroke(...this.color);
     point(this.xOff, this.yOff)
+    // point(this.xOff + height, this.yOff)
+    // point(this.xOff + height * 2, this.yOff)
   }
 }

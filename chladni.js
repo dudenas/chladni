@@ -9,7 +9,16 @@ let _changed = false
 
 const settings = {
   nParticles: 10000,
-  canvasSize: [600, 600],
+  canvasSize: [1200, 580],
+}
+
+function windowResized() {
+  const w = min(windowWidth, 1200)
+  let h = 580
+  if (w < 580) {
+    h = w
+  }
+  resizeCanvas(w, h);
 }
 
 const _totalFrames = 210
@@ -20,7 +29,7 @@ const DOMinit = () => {
   canvas.parent('sketch-container');
 
   a = random(0.5, 1.5),
-  b = random(0.5, 1.5);
+    b = random(0.5, 1.5);
 }
 
 const setupParticles = () => {
@@ -73,12 +82,33 @@ const wipeScreen = () => {
   stroke(0);
 }
 
+const checkToggle = () => {
+  $("#toggle-switch").on('change', function () {
+    if ($(this).is(':checked')) {
+      switchStatus = $(this).is(':checked');
+      $("body").css("background-color", "rgb(33, 33, 33)")
+      _clrs[0] = [212, 212, 212]
+      for (let particle of particles) {
+        particle.color = _clrs[particle.idx]
+      }
+    } else {
+      switchStatus = $(this).is(':checked');
+      $("body").css("background-color", "white")
+      _clrs[0] = [0, 0, 0]
+      for (let particle of particles) {
+        particle.color = _clrs[particle.idx]
+      }
+    }
+  });
+}
+
 
 /* Timing */
 // run at DOM load
 function setup() {
   DOMinit();
   setupParticles();
+  checkToggle();
 }
 // run each frame
 function draw() {
