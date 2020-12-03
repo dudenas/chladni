@@ -4,11 +4,11 @@ let particles, sliders, m, n, v, N;
 let a, b
 
 // vibration strength params
-let minWalk = 0.0025;
+let minWalk = 0.002;
 let _changed = false
 
 const settings = {
-  nParticles: 10000,
+  nParticles: 8000,
   canvasSize: [1200, 580],
 }
 
@@ -21,15 +21,16 @@ function windowResized() {
   resizeCanvas(w, h);
 }
 
-const _totalFrames = 210
+const _totalFrames = 150
 /* Initialization */
 
 const DOMinit = () => {
   let canvas = createCanvas(...settings.canvasSize, P2D);
   canvas.parent('sketch-container');
+  frameRate(30)
 
-  a = random(0.5, 1.5),
-    b = random(0.5, 1.5);
+  a = random(0.75, 1.25)
+  b = random(0.75, 1.25)
 }
 
 const setupParticles = () => {
@@ -41,12 +42,11 @@ const setupParticles = () => {
 }
 
 const pickRandomValues = () => {
-  n = floor(random(1, 14))
-  m = floor(random(1, 14))
+  n = floor(random(1, 11))
+  m = floor(random(1, 11))
   while (n == m) {
-    m = floor(random(1, 14))
+    m = floor(random(1, 11))
   }
-  console.log(n, m)
 }
 
 const updateParams = () => {
@@ -57,7 +57,7 @@ const updateParams = () => {
   // take percent that would rule the fucking animation
   let percent = (frameCount % _totalFrames) / _totalFrames;
   // velocity or the speed of the particle
-  v = map(sin(percent * TWO_PI), -1, 1, -0.05, 0.05)
+  v = map(Math.sin(percent * Math.PI * 2), -1, 1, -0.05, 0.05)
   // update n and m values
   if (percent >= 0.5 && !_changed) {
     pickRandomValues()
@@ -78,7 +78,6 @@ const moveParticles = () => {
 
 const wipeScreen = () => {
   clear()
-  // background(255);
   stroke(0);
 }
 
@@ -88,13 +87,19 @@ const checkToggle = () => {
       switchStatus = $(this).is(':checked');
       $("body").css("background-color", "rgb(33, 33, 33)")
       _clrs[0] = [212, 212, 212]
+      _clrs[1] = [99, 29, 99]
+      _clrs[2] = [180, 61, 43]
+      _clrs[3] = [255, 128, 0]
       for (let particle of particles) {
         particle.color = _clrs[particle.idx]
       }
     } else {
       switchStatus = $(this).is(':checked');
-      $("body").css("background-color", "white")
-      _clrs[0] = [0, 0, 0]
+      $("body").css("background-color", "#9393A0")
+      _clrs[0] = ['#3C3A55']
+      _clrs[1] = ['#54526A']
+      _clrs[2] = ['#6D6B80']
+      _clrs[3] = ['#232140']
       for (let particle of particles) {
         particle.color = _clrs[particle.idx]
       }
