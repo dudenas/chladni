@@ -1,23 +1,34 @@
+p5.disableFriendlyErrors = true; // disables FES
 let particles, sliders, m, n, v, N;
 
 // chladni frequency params
 let a, b
 
 // vibration strength params
-let minWalk = 0.002;
+const minWalk = 0.002;
 let _changed = false
+let _doubleGrfc = true
+let _offset = 0
+let w = 1200,
+  h = 600
 
 const settings = {
-  nParticles: 8000,
-  canvasSize: [1200, 580],
+  nParticles: 7000,
+  canvasSize: [w, h]
 }
 
+// resize window
 function windowResized() {
-  const w = min(windowWidth, 1200)
-  let h = 580
-  if (w < 580) {
-    h = w
+  if (windowWidth <= 1200) {
+    w = windowWidth
+    if (w <= 600) {
+      h = w
+      _doubleGrfc = false
+    } else {
+      _doubleGrfc = true
+    }
   }
+  _offset = abs(w - h * 2) / 2
   resizeCanvas(w, h);
 }
 
@@ -26,11 +37,24 @@ const _totalFrames = 150
 
 const DOMinit = () => {
   let canvas = createCanvas(...settings.canvasSize, P2D);
+
+  // resize window
+  if (windowWidth <= 1200) {
+    w = windowWidth
+    if (w <= 600) {
+      h = w
+      _doubleGrfc = false
+    }
+  }
+  _offset = abs(w - h * 2) / 2
+
+  resizeCanvas(w, h);
   canvas.parent('sketch-container');
-  frameRate(30)
+  // frameRate(30)
 
   a = random(0.75, 1.25)
   b = random(0.75, 1.25)
+  strokeWeight(1)
 }
 
 const setupParticles = () => {
@@ -39,6 +63,19 @@ const setupParticles = () => {
   for (let i = 0; i < settings.nParticles; i++) {
     particles[i] = new Particle();
   }
+
+  particles.sort(compare);
+}
+
+// sort
+const compare = (a, b) => {
+  if (a.idx < b.idx) {
+    return -1;
+  }
+  if (a.idx > b.idx) {
+    return 1;
+  }
+  return 0;
 }
 
 const pickRandomValues = () => {
@@ -53,7 +90,6 @@ const updateParams = () => {
   if (frameCount == 1) {
     pickRandomValues()
   }
-
   // take percent that would rule the fucking animation
   let percent = (frameCount % _totalFrames) / _totalFrames;
   // velocity or the speed of the particle
@@ -70,7 +106,23 @@ const updateParams = () => {
 
 const moveParticles = () => {
   // particle movement
-  for (let particle of particles) {
+  let curr = 0
+  for (let i = 0; i < particles.length; i++) {
+    let particle = particles[i]
+    // change color only once for all particles
+    if (i == particles.length / 5 * 4) {
+      stroke(..._clrs[curr++])
+    }
+    if (i == particles.length / 5 * 3) {
+      stroke(..._clrs[curr++])
+    }
+    if (i == particles.length / 5 * 2) {
+      stroke(..._clrs[curr++])
+    }
+    if (i == particles.length / 5 * 1) {
+      stroke(..._clrs[curr++])
+    }
+    // move and show particles
     particle.move();
     particle.show();
   }
@@ -78,46 +130,18 @@ const moveParticles = () => {
 
 const wipeScreen = () => {
   clear()
-  stroke(0);
-}
-
-const checkToggle = () => {
-  $("#toggle-switch").on('change', function () {
-    if ($(this).is(':checked')) {
-      switchStatus = $(this).is(':checked');
-      $("body").css("background-color", "rgb(33, 33, 33)")
-      _clrs[0] = [212, 212, 212]
-      _clrs[1] = [99, 29, 99]
-      _clrs[2] = [180, 61, 43]
-      _clrs[3] = [255, 128, 0]
-      for (let particle of particles) {
-        particle.color = _clrs[particle.idx]
-      }
-    } else {
-      switchStatus = $(this).is(':checked');
-      $("body").css("background-color", "#9393A0")
-      _clrs[0] = ['#3C3A55']
-      _clrs[1] = ['#54526A']
-      _clrs[2] = ['#6D6B80']
-      _clrs[3] = ['#232140']
-      for (let particle of particles) {
-        particle.color = _clrs[particle.idx]
-      }
-    }
-  });
 }
 
 
 /* Timing */
 // run at DOM load
 function setup() {
-  DOMinit();
-  setupParticles();
-  checkToggle();
+  DOMinit()
+  setupParticles()
 }
 // run each frame
 function draw() {
-  wipeScreen();
-  updateParams();
-  moveParticles();
+  wipeScreen()
+  updateParams()
+  moveParticles()
 }
